@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+    <meta charset="UTF-8">
+    <title>Add Teacher - GitHub Version</title>
+    <style>
+        body { font-family: 'Segoe UI', sans-serif; background: #eef2f3; padding: 20px; }
+        .box { max-width: 400px; margin: auto; background: white; padding: 25px; border-radius: 12px; box-shadow: 0 4px 10px rgba(0,0,0,0.1); }
+        input { width: 100%; padding: 12px; margin: 8px 0; border: 1px solid #ccc; border-radius: 5px; box-sizing: border-box; }
+        button { width: 100%; padding: 12px; background: #1a73e8; color: white; border: none; border-radius: 5px; font-weight: bold; cursor: pointer; transition: 0.3s; }
+        button:disabled { background: #ccc; }
+        #status { text-align: center; color: #27ae60; font-weight: bold; margin-top: 15px; font-size: 14px; }
+    </style>
+</head>
+<body>
+
+<div class="box">
+    <h2 style="color:#2c3e50; text-align:center;">Add Teacher Details</h2>
+    <input id="n" placeholder="Teacher Full Name">
+    <input id="r" placeholder="Designation (e.g. TGT, PGT)">
+    <input id="s" placeholder="Subject">
+    <input id="q" placeholder="Qualification">
+    <input id="e" placeholder="Experience (in years)">
+    <input id="i" placeholder="Drive Photo Link">
+    <button id="saveBtn" onclick="save()">Save Teacher Profile</button>
+    <div id="status"></div>
+</div>
+
+<script>
+    // APNA GOOGLE WEB APP URL YAHAN DALEIN
+    const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbx5WI1klW0d3yOChBOVesKr75Y46yQkElgGUIzU0mmKfhqD2Jp6fqvCRv_Lvl8o0Ygt/exec";
+
+    async function save() {
+        const btn = document.getElementById('saveBtn');
+        const status = document.getElementById('status');
+        
+        // Validation
+        const name = document.getElementById('n').value;
+        if(!name) { alert("Please enter name"); return; }
+
+        btn.disabled = true;
+        status.innerText = "Processing... Please wait";
+        status.style.color = "orange";
+
+        const obj = {
+            name: name,
+            role: document.getElementById('r').value,
+            subject: document.getElementById('s').value,
+            qual: document.getElementById('q').value,
+            exp: document.getElementById('e').value,
+            img: document.getElementById('i').value
+        };
+
+        try {
+            // Google Script ko data bhejna
+            const response = await fetch(WEB_APP_URL, {
+                method: "POST",
+                mode: "no-cors", // Google Apps Script ke liye zaroori
+                cache: "no-cache",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(obj)
+            });
+
+            // Note: no-cors mode mein response read nahi kar sakte but data chala jata hai
+            status.innerText = "Profile Sent Successfully!";
+            status.style.color = "green";
+            document.querySelectorAll('input').forEach(i => i.value = "");
+            
+        } catch (error) {
+            status.innerText = "Error: " + error.message;
+            status.style.color = "red";
+        } finally {
+            btn.disabled = false;
+        }
+    }
+</script>
+
+</body>
+</html>
